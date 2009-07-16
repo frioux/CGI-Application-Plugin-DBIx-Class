@@ -1,3 +1,4 @@
+<<<<<<< HEAD:lib/CGI/Application/Plugin/DBIx/Class.pm
 package CGI::Application::Plugin::DBIx::Class;
 
 # ABSTRACT: Access a DBIx::Class Schema from a CGI::Application
@@ -16,6 +17,7 @@ use base qw(Exporter AutoLoader);
 @EXPORT_OK = qw(&dbic_config &page_and_sort &schema &search &simple_search &simple_sort &sort &paginate &simple_deletion);
 
 $VERSION = '0.0001';
+%EXPORT_TAGS = (all => [@EXPORT_OK]);
 
 method dbic_config($config) {
    my $ignored_params = $config->{ignored_params} ||
