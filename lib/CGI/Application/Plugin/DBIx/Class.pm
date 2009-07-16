@@ -1,4 +1,7 @@
 package CGI::Application::Plugin::DBIx::Class;
+
+# ABSTRACT: Access a DBIx::Class Schema from a CGI::Application
+
 use strict;
 use warnings;
 use vars qw($VERSION @EXPORT_OK);
@@ -12,7 +15,7 @@ use base qw(Exporter AutoLoader);
 
 @EXPORT_OK = qw(&dbic_config &page_and_sort &schema &search &simple_search &simple_sort &sort &paginate &simple_deletion);
 
-$VERSION = '0.01';
+$VERSION = '0.0001';
 
 method dbic_config($config) {
    my $ignored_params = $config->{ignored_params} ||
@@ -127,4 +130,106 @@ method simple_sort {
    return $rs->search(undef, { %order_by });
 }
 
-1;
+"Sleepy time";
+
+=pod
+
+=head1 NAME
+
+CGI::Application::Plugin::DBIx::Class - distribution builder; installer not included!
+
+=head1 VERSION
+
+version 0.0001
+
+=head1 DESCRIPTION
+
+
+=head1 METHODS
+
+=head2 dbic_config
+
+  $self->dbic_config({schema => MyApp::Schema->connect(@connection_data)});
+
+Description
+
+Valid arguments are:
+
+  schema - Instance of DBIC Schema
+  ignored_params - Params to ignore
+
+=head2 page_and_sort
+
+  my $resultset = $self->schema->resultset('Foo');
+  my $result = $self->page_and_sort($resultset);
+
+Description
+
+=head2 paginate
+
+  my $resultset = $self->schema->resultset('Foo');
+  my $result = $self->paginate($resultset);
+
+Description
+
+Valid arguments are:
+
+  resultset - DBIx::Class::ResultSet
+
+=head2 paginate
+
+  my $resultset = $self->schema->resultset('Foo');
+  my $result = $self->paginate($resultset);
+
+Description
+
+=head2 schema
+
+  my $schema = $self->schema;
+
+Description
+
+=head2 search
+
+  my $resultset   = $self->schema->resultset('Foo');
+  my $searched_rs = $self->search($resultset);
+
+Description, uses $rs->controller_search
+
+=head2 sort
+
+  my $resultset = $self->schema->resultset('Foo');
+  my $result = $self->sort($resultset);
+
+Description, uses $rs->controller_sort
+
+=head2 simple_deletion
+
+  $self->simple_deletion({ table => 'Foo' });
+
+Valid arguments are:
+
+  table - source loaded into schema
+
+=head2 simple_search
+
+  my $searched_rs = $self->simple_search({ table => 'Foo' });
+
+Valid arguments are:
+
+  table - source loaded into schema
+
+=head2 simple_sort
+
+  my $resultset = $self->schema->resultset('Foo');
+  my $sorted_rs = $self->simple_sort($resultset);
+
+Valid arguments are:
+
+  table - source loaded into schema
+
+Description
+
+=cut
+
+__END__
