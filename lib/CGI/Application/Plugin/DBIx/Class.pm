@@ -1,4 +1,3 @@
-<<<<<<< HEAD:lib/CGI/Application/Plugin/DBIx/Class.pm
 package CGI::Application::Plugin::DBIx::Class;
 
 # ABSTRACT: Access a DBIx::Class Schema from a CGI::Application
