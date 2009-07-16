@@ -4,7 +4,6 @@ package CGI::Application::Plugin::DBIx::Class;
 
 use strict;
 use warnings;
-use vars qw($VERSION @EXPORT_OK);
 use Readonly;
 use Carp 'croak';
 use Method::Signatures::Simple;
@@ -13,10 +12,10 @@ require Exporter;
 
 use base qw(Exporter AutoLoader);
 
-@EXPORT_OK = qw(&dbic_config &page_and_sort &schema &search &simple_search &simple_sort &sort &paginate &simple_deletion);
+our @EXPORT_OK = qw(&dbic_config &page_and_sort &schema &search &simple_search &simple_sort &sort &paginate &simple_deletion);
 
-$VERSION = '0.0001';
-%EXPORT_TAGS = (all => [@EXPORT_OK]);
+our $VERSION = '0.0001';
+our %EXPORT_TAGS = (all => [@EXPORT_OK]);
 
 method dbic_config($config) {
    my $ignored_params = $config->{ignored_params} ||
