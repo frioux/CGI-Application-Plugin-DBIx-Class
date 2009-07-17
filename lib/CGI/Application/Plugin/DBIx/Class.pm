@@ -6,18 +6,20 @@ use strict;
 use warnings;
 use Readonly;
 use Carp 'croak';
-use Method::Signatures::Simple;
 
 require Exporter;
 
 use base qw(Exporter AutoLoader);
 
-our @EXPORT_OK = qw(&dbic_config &page_and_sort &schema &search &simple_search &simple_sort &sort &paginate &simple_deletion);
-
-our $VERSION = '0.0001';
+our @EXPORT_OK   = qw(&dbic_config &page_and_sort &schema &search &simple_search &simple_sort &sort &paginate &simple_deletion);
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
+our $VERSION     = '0.0001';
 
-method dbic_config($config) {
+Readonly my $PAGES => 25;
+
+sub dbic_config {
+   my $self = shift;
+   my $config = shift;
    my $ignored_params = $config->{ignored_params} ||
       [qw{limit start sort dir _dc rm xaction}];
 
@@ -26,15 +28,15 @@ method dbic_config($config) {
    $self->{__dbic_schema_class} = $config->{schema} or die 'you must pass a schema into dbic_config';
 }
 
-Readonly my $PAGES => 25;
-
-method page_and_sort {
+sub page_and_sort {
+   my $self = shift;
    my $rs = shift;
    $rs = $self->simple_sort($rs);
    return $self->paginate($rs);
 }
 
-method paginate {
+sub paginate {
+   my $self     = shift;
    my $resultset = shift;
    # param names should be configurable
    my $rows = $self->query->param('limit') || $PAGES;
@@ -71,26 +73,33 @@ method paginate {
    return $self->json_body($data); # json stuff
 }
 
-method schema {
+sub schema {
+   my $self = shift;
    if ( !$self->{schema} ) {
       $self->{schema} = $self->{__dbic_schema_class}->connect( sub { $self->dbh() } );
    }
    return $self->{schema};
 }
 
-method search($rs_name) {
+sub search {
+   my $self = shift;
+   my $rs_name = shift;
    my %q       = $self->query->Vars;
    my $rs      = $self->schema->resultset($rs_name);
    return $rs->controller_search(\%q);
 }
 
-method sort($rs_name) {
+sub sort {
+   my $self = shift;
+   my $rs_name = shift;
    my %q       = $self->query->Vars;
    my $rs      = $self->schema->resultset($rs_name);
    return $rs->controller_sort(\%q);
 }
 
-method simple_deletion($params) {
+sub simple_deletion {
+   my $self = shift;
+   my $params = shift;
    # param names should be configurable
    my @to_delete = $self->query->param('to_delete') or croak 'Required parameter (to_delete) undefined!';
    my $rs =
@@ -102,7 +111,9 @@ method simple_deletion($params) {
    return \@to_delete;
 }
 
-method simple_search($params) {
+sub simple_search {
+   my $self = shift;
+   my $params = shift;
    my $table  = $params->{table};
    my %skips  = %{$self->{__dbic_ignored_params}};
    my $searches = {};
@@ -118,7 +129,8 @@ method simple_search($params) {
    return $self->page_and_sort($rs_full);
 }
 
-method simple_sort {
+sub simple_sort {
+   my $self = shift;
    # param names should be configurable
    my $rs = shift;
    my %order_by = ( order_by => [ $rs->result_source->primary_columns ] );
@@ -130,17 +142,9 @@ method simple_sort {
    return $rs->search(undef, { %order_by });
 }
 
-"Sleepy time";
+'Sleepy time';
 
 =pod
-
-=head1 NAME
-
-CGI::Application::Plugin::DBIx::Class - distribution builder; installer not included!
-
-=head1 VERSION
-
-version 0.0001
 
 =head1 DESCRIPTION
 
