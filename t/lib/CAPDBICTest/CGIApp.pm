@@ -4,12 +4,23 @@ use warnings;
 
 use parent 'CGI::Application';
 
+use Readonly;
+use CGI::Application::Plugin::DBH (qw/dbh_config dbh/);
 use CAPDBICTest::Schema;
-
 use CGI::Application::Plugin::DBIx::Class ':all';
+
+Readonly our $DBFILE => 'test.db';
+Readonly our $CONNECT_STR => "dbi:SQLite:dbname=$DBFILE";
 
 sub cgiapp_init {
   my $self = shift;
+
+  warn $CONNECT_STR;
+  $self->dbh_config( $CONNECT_STR );
+
+  $self->dbic_config({
+     schema => 'CAPDBICTest::Schema',
+  });
 }
 
 sub setup {
@@ -25,5 +36,5 @@ sub test_mode {
   return 1;
 }
 
-
 1;
+
