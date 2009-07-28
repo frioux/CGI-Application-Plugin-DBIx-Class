@@ -52,25 +52,9 @@ sub paginate {
          page => $page
       });
 
-   # this is a workaround for MSSQL
-   my $is_last_page =
-      $total - $rows * ( $page - 1 ) < $rows
-      ? 1
-      : 0;
+   my $data = { data => $paginated_rs, total => $total };
 
-   my $skip = $rows - $total % $rows + 1;
-
-   # this json stuff needs to be in a completely separate class
-   my $data = { data => [], total => $total };
-
-   TO_JSON:
-   while ( my $row = $paginated_rs->next() ) {
-      $skip--;
-      next TO_JSON if $page != 1 and $is_last_page and ($skip > 0); # workaround
-      push @{ $data->{data} }, $row->TO_JSON; # json stuff
-   }
-
-   return $self->json_body($data); # json stuff
+   return $data;
 }
 
 sub schema {
@@ -103,11 +87,10 @@ sub simple_deletion {
    # param names should be configurable
    my @to_delete = $self->query->param('to_delete') or croak 'Required parameter (to_delete) undefined!';
    my $rs =
-     $self->schema()->resultset( $params->{table} )
-     ->search( { id => { -in => \@to_delete } }, {} );
-   while ( my $record = $rs->next() ) {    ## no critic (AmbiguousNames)
-      $record->delete();
-   }
+     $self->schema->resultset( $params->{table} )
+     ->search({
+           id => { -in => \@to_delete }
+     })->delete;
    return \@to_delete;
 }
 
