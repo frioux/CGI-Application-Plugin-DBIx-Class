@@ -25,7 +25,7 @@ sub dbic_config {
 
    $self->{__dbic_ignored_params} = { map { $_ => 1 } @{$ignored_params} };
 
-   $self->{__dbic_schema_class} = $config->{schema} or die 'you must pass a schema into dbic_config';
+   $self->{__dbic_schema_class} = $config->{schema} or croak 'you must pass a schema into dbic_config';
 }
 
 sub page_and_sort {
@@ -67,7 +67,7 @@ sub schema {
 
 sub search {
    my $self = shift;
-   my $rs_name = shift;
+   my $rs_name = shift or croak 'required parameter rs_name for search was undefined';
    my %q       = $self->query->Vars;
    my $rs      = $self->schema->resultset($rs_name);
    return $rs->controller_search(\%q);
@@ -75,7 +75,7 @@ sub search {
 
 sub sort {
    my $self = shift;
-   my $rs_name = shift;
+   my $rs_name = shift or croak 'required param to sort rs_name was undefined';
    my %q       = $self->query->Vars;
    my $rs      = $self->schema->resultset($rs_name);
    return $rs->controller_sort(\%q);
@@ -115,7 +115,7 @@ sub simple_search {
 sub simple_sort {
    my $self = shift;
    # param names should be configurable
-   my $rs = shift;
+   my $rs = shift or croak 'required parameter rs for simple_sort not defined';
    my %order_by = ( order_by => [ $rs->result_source->primary_columns ] );
    if ( $self->query->param('sort') ) {
       %order_by =
