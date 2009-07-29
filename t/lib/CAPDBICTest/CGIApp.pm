@@ -15,7 +15,6 @@ Readonly our $CONNECT_STR => "dbi:SQLite:dbname=$DBFILE";
 sub cgiapp_init {
   my $self = shift;
 
-  warn $CONNECT_STR;
   $self->dbh_config( $CONNECT_STR );
 
   $self->dbic_config({
