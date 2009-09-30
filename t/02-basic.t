@@ -1,7 +1,7 @@
 #!perl
 use strict;
 use warnings;
-use Test::More 'no_plan';
+use Test::More;
 use Test::Deep;
 use UNIVERSAL;
 use FindBin;
@@ -31,15 +31,13 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
 # page_and_sort
 {
    my $paged_and_sorted = $t1_obj->page_and_sort($t1_obj->schema->resultset('Stations'));
-   is $paged_and_sorted->{total} => 0, 'total from page_and_sort correctly set';
-   ok $paged_and_sorted->{data}->isa('DBIx::Class::ResultSet'), 'data from page_and_sort correctly set';
+   ok $paged_and_sorted->isa('DBIx::Class::ResultSet'), 'data from page_and_sort correctly set';
 }
 
 # paginate
 {
    my $paginated = $t1_obj->paginate($t1_obj->schema->resultset('Stations'));
-   is $paginated->{total} => 0, 'total from pagination correctly set';
-   ok $paginated->{data}->isa('DBIx::Class::ResultSet'), 'data from pagination correctly set';
+   ok $paginated->isa('DBIx::Class::ResultSet'), 'data from pagination correctly set';
 }
 
 # search
@@ -66,8 +64,7 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
 {
    $t1_obj->query->param('bill', 1);
    my $simple_searched = $t1_obj->simple_search({ table => 'Stations' });
-   is $simple_searched->{total} => 0, 'total from simple_search correctly set';
-   ok $simple_searched->{data}->isa('DBIx::Class::ResultSet'), 'data from simple_search correctly set';
+   ok $simple_searched->isa('DBIx::Class::ResultSet'), 'data from simple_search correctly set';
 }
 
 # simple_sort
@@ -76,4 +73,5 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
    ok $simple_sorted->isa('DBIx::Class::ResultSet'), 'data from simple_sort correctly set';
 }
 
+done_testing;
 END { unlink $CAPDBICTest::CGIApp::DBFILE };
