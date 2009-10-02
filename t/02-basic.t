@@ -68,20 +68,16 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
 }
 
 # search
-TODO:
 {
-   local $TODO = 'need real search test';
    my $searched = $t1_obj->search('Stations');
-   ok $searched->isa('DBIx::Class::ResultSet'), 'data from search correctly set';
+   cmp_deeply [map $_->id, $searched->all], [3], q{controller_search get's called by search};
    $t1_obj->query->delete_all;
 }
 
 # sort
-TODO:
 {
-   local $TODO = 'need real sort test';
    my $sort = $t1_obj->sort('Stations');
-   ok $sort->isa('DBIx::Class::ResultSet'), 'data from sort correctly set';
+   cmp_deeply [map $_->bill, $sort->all], [sort map $_->bill, $sort->all], q{controller_sort get's called by sort};
    $t1_obj->query->delete_all;
 }
 
