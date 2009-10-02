@@ -44,16 +44,11 @@ sub paginate {
       $self->query->param('start')
       ? ( $self->query->param('start') / $rows + 1 )
       : 1;
-   my $total = $resultset->count;
 
-   my $paginated_rs = $resultset->search( undef, {
-         rows => $rows,
-         page => $page
-      });
-
-   my $data = { data => $paginated_rs, total => $total };
-
-   return $data;
+   return $resultset->search_rs( undef, {
+      rows => $rows,
+      page => $page
+   });
 }
 
 sub schema {
@@ -100,7 +95,10 @@ sub simple_search {
    my %skips  = %{$self->{__dbic_ignored_params}};
    my $searches = {};
    foreach ( keys %{ $self->query->Vars } ) {
-      if ( $self->query->param($_) and not $skips{$_} ) {
+      # we use '' here because it's conceivable that someone
+      # would want to search with a 0, whereas '' is always
+      # going to imply null for a user
+      if ( $self->query->param($_) ne '' and not $skips{$_} ) {
          # should be configurable
          $searches->{$_} = { like => q{%} . $self->query->param($_) . q{%} };
       }
@@ -117,14 +115,16 @@ sub simple_sort {
    my $rs = shift or croak 'required parameter rs for simple_sort not defined';
    my %order_by = ( order_by => [ $rs->result_source->primary_columns ] );
    if ( $self->query->param('sort') ) {
-      %order_by =
-        ( order_by => $self->query->param('sort') . q{ }
-           . $self->query->param('dir') );
+      %order_by = (
+         order_by => {
+            q{-}.$self->request->params->{dir} => $self->request->params->{sort}
+         }
+      );
    }
    return $rs->search(undef, { %order_by });
 }
 
-'Sleepy time';
+1;
 
 =pod
 
