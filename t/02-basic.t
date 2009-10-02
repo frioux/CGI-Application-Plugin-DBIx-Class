@@ -32,11 +32,6 @@ $schema->populate(Stations => [
    [qw{9  wicked  out       }],
 ]);
 
-my @methods = qw{dbic_config paginate schema search sort simple_deletion simple_search sort};
-foreach (@methods) {
-   ok $t1_obj->can($_), "Can $_";
-}
-
 ok $t1_obj->schema->isa('DBIx::Class::Schema'), 'schema() method returns DBIx::Class schema';
 ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
 
@@ -47,7 +42,11 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
    $t1_obj->query->param(sort => 'bill');
    my $paged_and_sorted =
       $t1_obj->page_and_sort($t1_obj->schema->resultset('Stations'));
-   is $paged_and_sorted->count => 3, 'page and sort correctly pages'
+   is $paged_and_sorted->count => 3, 'page_and_sort correctly pages';
+   cmp_deeply [map $_->bill, $paged_and_sorted->all],
+              [sort map $_->bill, $paged_and_sorted->all],
+	      'page_and_sort correctly sorts';
+   $t1_obj->query->delete_all;
 }
 
 # paginate
@@ -65,6 +64,7 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
    @hash{map $_->id, $paginated->all} = ();
    ok !grep({ exists $hash{$_} } map $_->id, $paginated_with_start->all ),
       'pages do not intersect';
+   $t1_obj->query->delete_all;
 }
 
 # search
@@ -73,6 +73,7 @@ TODO:
    local $TODO = 'need real search test';
    my $searched = $t1_obj->search('Stations');
    ok $searched->isa('DBIx::Class::ResultSet'), 'data from search correctly set';
+   $t1_obj->query->delete_all;
 }
 
 # sort
@@ -81,6 +82,7 @@ TODO:
    local $TODO = 'need real sort test';
    my $sort = $t1_obj->sort('Stations');
    ok $sort->isa('DBIx::Class::ResultSet'), 'data from sort correctly set';
+   $t1_obj->query->delete_all;
 }
 
 # simple_search
@@ -89,6 +91,7 @@ TODO:
    my $simple_searched = $t1_obj->simple_search({ table => 'Stations' });
    is scalar(grep { $_->bill =~ m/oo/ } $simple_searched->all),
       scalar($simple_searched->all), 'simple search found the right results';
+   $t1_obj->query->delete_all;
 }
 
 # simple_sort
@@ -110,6 +113,7 @@ TODO:
    cmp_deeply [map $_->bill, $simple_sorted->all],
               [reverse sort map $_->bill, $simple_sorted->all],
 	      'alternate sort works';
+   $t1_obj->query->delete_all;
 }
 
 # simple_deletion
@@ -119,7 +123,7 @@ TODO:
    my $simple_deletion = $t1_obj->simple_deletion({ table => 'Stations' });
    cmp_bag $simple_deletion => [1,2,3], 'values appear to be deleted';
    cmp_bag [map $_->id, $t1_obj->schema->resultset('Stations')->all] => [4..9], 'values are deleted';
-   $t1_obj->query->delete('to_delete');
+   $t1_obj->query->delete_all;
 }
 
 done_testing;
