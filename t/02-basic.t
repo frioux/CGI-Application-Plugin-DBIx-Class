@@ -48,8 +48,19 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
 
 # paginate
 {
+
+   $t1_obj->query->param(limit => 3);
    my $paginated = $t1_obj->paginate($t1_obj->schema->resultset('Stations'));
-   ok $paginated->isa('DBIx::Class::ResultSet'), 'data from pagination correctly set';
+   cmp_ok $paginated->count, '>=', 3,
+      'paginate gave the correct amount of results';
+
+   $t1_obj->query->param(start => 3);
+   my $paginated_with_start =
+      $t1_obj->paginate($t1_obj->schema->resultset('Stations'));
+   my %hash;
+   @hash{map $_->id, $paginated->all} = ();
+   ok !grep({ exists $hash{$_} } map $_->id, $paginated_with_start->all ),
+      'pages do not intersect';
 }
 
 # search
