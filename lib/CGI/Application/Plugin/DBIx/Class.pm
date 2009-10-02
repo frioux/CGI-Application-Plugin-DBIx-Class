@@ -128,6 +128,30 @@ sub simple_sort {
 
 =pod
 
+=head1 SYNOPSIS
+
+  use CGI::Application::Plugin::DBH (qw/dbh_config dbh/);
+  use CGI::Application::Plugin::DBIx::Class ':all';
+
+  sub cgiapp_init  {
+      my $self = shift;
+
+      # see docs for L<CGI::Application::Plugin::DBH>
+      $self->dbh_config($data_source, $username, $auth, \%attr);
+  }
+
+  sub my_run_mode {
+     my $self = shift;
+
+     my $date = $self->dbh->selectrow_array("SELECT CURRENT_DATE");
+     # again with a named handle
+     $date = $self->dbh('my_handle')->selectrow_array("SELECT CURRENT_DATE");
+
+  }
+
+
+
+
 =head1 DESCRIPTION
 
 =head1 METHODS
