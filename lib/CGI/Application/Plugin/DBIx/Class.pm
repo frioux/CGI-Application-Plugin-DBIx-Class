@@ -64,6 +64,7 @@ sub search {
    my $rs_name = shift or croak 'required parameter rs_name for search was undefined';
    my %q       = $self->query->Vars;
    my $rs      = $self->schema->resultset($rs_name);
+   # name of method should be configurable
    return $rs->controller_search(\%q);
 }
 
@@ -72,6 +73,7 @@ sub sort {
    my $rs_name = shift or croak 'required param to sort rs_name was undefined';
    my %q       = $self->query->Vars;
    my $rs      = $self->schema->resultset($rs_name);
+   # name of method should be configurable
    return $rs->controller_sort(\%q);
 }
 
