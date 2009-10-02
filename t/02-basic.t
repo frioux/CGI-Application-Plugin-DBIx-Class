@@ -53,15 +53,48 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
 }
 
 # search
+TODO:
 {
+   local $TODO = 'need real search test';
    my $searched = $t1_obj->search('Stations');
    ok $searched->isa('DBIx::Class::ResultSet'), 'data from search correctly set';
 }
 
 # sort
+TODO:
 {
+   local $TODO = 'need real sort test';
    my $sort = $t1_obj->sort('Stations');
    ok $sort->isa('DBIx::Class::ResultSet'), 'data from sort correctly set';
+}
+
+# simple_search
+{
+   $t1_obj->query->param('bill', 'oo');
+   my $simple_searched = $t1_obj->simple_search({ table => 'Stations' });
+   is scalar(grep { $_->bill =~ m/oo/ } $simple_searched->all),
+      scalar($simple_searched->all), 'simple search found the right results';
+}
+
+# simple_sort
+{
+   my $simple_sorted =
+      $t1_obj->simple_sort($t1_obj->schema->resultset('Stations'));
+   cmp_deeply [map $_->id, $simple_sorted->all], [1..9], 'default sort is id';
+
+   $t1_obj->query->param(dir => 'asc');
+   $t1_obj->query->param(sort => 'bill');
+   $simple_sorted =
+      $t1_obj->simple_sort($t1_obj->schema->resultset('Stations'));
+   cmp_deeply [map $_->bill, $simple_sorted->all],
+              [sort map $_->bill, $simple_sorted->all], 'alternate sort works';
+
+   $t1_obj->query->param(dir => 'desc');
+   $simple_sorted =
+      $t1_obj->simple_sort($t1_obj->schema->resultset('Stations'));
+   cmp_deeply [map $_->bill, $simple_sorted->all],
+              [reverse sort map $_->bill, $simple_sorted->all],
+	      'alternate sort works';
 }
 
 # simple_deletion
@@ -72,21 +105,6 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
    cmp_bag $simple_deletion => [1,2,3], 'values appear to be deleted';
    cmp_bag [map $_->id, $t1_obj->schema->resultset('Stations')->all] => [4..9], 'values are deleted';
    $t1_obj->query->delete('to_delete');
-}
-
-# simple_search
-{
-   $t1_obj->query->param('bill', 'oo');
-   my $simple_searched = $t1_obj->simple_search({ table => 'Stations' });
-   use Data::Dump 'pp';
-   pp [map $_->id, $simple_searched->all];
-   ok $simple_searched->isa('DBIx::Class::ResultSet'), 'data from simple_search correctly set';
-}
-
-# simple_sort
-{
-   my $simple_sorted = $t1_obj->simple_sort($t1_obj->schema->resultset('Stations'));
-   ok $simple_sorted->isa('DBIx::Class::ResultSet'), 'data from simple_sort correctly set';
 }
 
 done_testing;
