@@ -5,7 +5,7 @@ use warnings;
 
 __PACKAGE__->load_components('Core');
 __PACKAGE__->table('Station');
-__PACKAGE__->add_columns(qw/ id bill ted grim_reaper de_nomolos /);
+__PACKAGE__->add_columns(qw/ id bill ted /);
 __PACKAGE__->set_primary_key('id');
 
 1;

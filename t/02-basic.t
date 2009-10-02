@@ -19,6 +19,18 @@ my $t1_output = $t1_obj->run();
 
 my $schema = CAPDBICTest::Schema->connect( $CAPDBICTest::CGIApp::CONNECT_STR );
 $schema->deploy();
+$schema->populate(Stations => [
+   [qw{id bill    ted       }],
+   [qw{1  awesome bitchin   }],
+   [qw{2  cool    bad       }],
+   [qw{3  tubular righeous  }],
+   [qw{4  rad     totally   }],
+   [qw{5  sweet   beesknees }],
+   [qw{6  gnarly  killer    }],
+   [qw{7  hot     legit     }],
+   [qw{8  groovy  station   }],
+   [qw{9  wicked  out       }],
+]);
 
 my @methods = qw{dbic_config paginate schema search sort simple_deletion simple_search sort};
 foreach (@methods) {
@@ -55,15 +67,19 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
 # simple_deletion
 {
    $t1_obj->query->param('to_delete', 1, 2, 3);
+   cmp_bag [map $_->id, $t1_obj->schema->resultset('Stations')->all] => [1..9], 'values are not deleted';
    my $simple_deletion = $t1_obj->simple_deletion({ table => 'Stations' });
    cmp_bag $simple_deletion => [1,2,3], 'values appear to be deleted';
+   cmp_bag [map $_->id, $t1_obj->schema->resultset('Stations')->all] => [4..9], 'values are deleted';
    $t1_obj->query->delete('to_delete');
 }
 
 # simple_search
 {
-   $t1_obj->query->param('bill', 1);
+   $t1_obj->query->param('bill', 'oo');
    my $simple_searched = $t1_obj->simple_search({ table => 'Stations' });
+   use Data::Dump 'pp';
+   pp [map $_->id, $simple_searched->all];
    ok $simple_searched->isa('DBIx::Class::ResultSet'), 'data from simple_search correctly set';
 }
 
