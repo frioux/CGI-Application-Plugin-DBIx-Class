@@ -42,8 +42,12 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
 
 # page_and_sort
 {
-   my $paged_and_sorted = $t1_obj->page_and_sort($t1_obj->schema->resultset('Stations'));
-   ok $paged_and_sorted->isa('DBIx::Class::ResultSet'), 'data from page_and_sort correctly set';
+   $t1_obj->query->param(limit => 3);
+   $t1_obj->query->param(dir => 'asc');
+   $t1_obj->query->param(sort => 'bill');
+   my $paged_and_sorted =
+      $t1_obj->page_and_sort($t1_obj->schema->resultset('Stations'));
+   is $paged_and_sorted->count => 3, 'page and sort correctly pages'
 }
 
 # paginate
