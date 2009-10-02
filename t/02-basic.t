@@ -84,7 +84,7 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
 # simple_search
 {
    $t1_obj->query->param('bill', 'oo');
-   my $simple_searched = $t1_obj->simple_search({ table => 'Stations' });
+   my $simple_searched = $t1_obj->simple_search({ rs => 'Stations' });
    is scalar(grep { $_->bill =~ m/oo/ } $simple_searched->all),
       scalar($simple_searched->all), 'simple search found the right results';
    $t1_obj->query->delete_all;
@@ -116,7 +116,7 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
 {
    $t1_obj->query->param('to_delete', 1, 2, 3);
    cmp_bag [map $_->id, $t1_obj->schema->resultset('Stations')->all] => [1..9], 'values are not deleted';
-   my $simple_deletion = $t1_obj->simple_deletion({ table => 'Stations' });
+   my $simple_deletion = $t1_obj->simple_deletion({ rs => 'Stations' });
    cmp_bag $simple_deletion => [1,2,3], 'values appear to be deleted';
    cmp_bag [map $_->id, $t1_obj->schema->resultset('Stations')->all] => [4..9], 'values are deleted';
    $t1_obj->query->delete_all;

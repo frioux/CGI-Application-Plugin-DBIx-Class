@@ -83,7 +83,7 @@ sub simple_deletion {
    # param names should be configurable
    my @to_delete = $self->query->param('to_delete') or croak 'Required parameter (to_delete) undefined!';
    my $rs =
-     $self->schema->resultset( $params->{table} )
+     $self->schema->resultset( $params->{rs} )
      ->search({
            id => { -in => \@to_delete }
      })->delete;
@@ -93,7 +93,7 @@ sub simple_deletion {
 sub simple_search {
    my $self = shift;
    my $params = shift;
-   my $table  = $params->{table};
+   my $rs  = $params->{rs};
    my %skips  = %{$self->{__dbic_ignored_params}};
    my $searches = {};
    foreach ( keys %{ $self->query->Vars } ) {
@@ -106,7 +106,7 @@ sub simple_search {
       }
    }
 
-   my $rs_full = $self->schema()->resultset($table)->search($searches);
+   my $rs_full = $self->schema()->resultset($rs)->search($searches);
 
    return $self->page_and_sort($rs_full);
 }
@@ -140,21 +140,32 @@ sub simple_sort {
 
       # see docs for L<CGI::Application::Plugin::DBH>
       $self->dbh_config($data_source, $username, $auth, \%attr);
+      $self->dbic_config({schema => 'MyApp::Schema' });
   }
 
-  sub my_run_mode {
-     my $self = shift;
-
-     my $date = $self->dbh->selectrow_array("SELECT CURRENT_DATE");
-     # again with a named handle
-     $date = $self->dbh('my_handle')->selectrow_array("SELECT CURRENT_DATE");
-
+  sub person {
+     my $self   = shift;
+     my $id     = $self->query->param('id');
+     my $person = $self->schema->resultset('People')->find($id);
+     # ...
   }
 
-
+  sub people {
+     my $self   = shift;
+     my $people = $self->page_and_sort(
+         $self->simple_search(
+            $self->schema->resultset('People')
+         )
+     );
+  }
 
 
 =head1 DESCRIPTION
+
+This module basically helps you to map various L<DBIx::Class> features to cgi
+parameters.  For the most part that means it will help you do searching,
+sorting, and pagination with a minimum of effort and thought.  Currently the
+connection is gotten from L<CGI::Application::Plugin::DBH>.
 
 =head1 METHODS
 
@@ -168,7 +179,7 @@ You must run this method in setup or cgiapp_init to setup your schema.
 
 Valid arguments are:
 
-  schema - Required, Instance of DBIC Schema
+  schema - Required, Name of DBIC Schema
   ignored_params - Optional, Params to ignore when doing a simple search or sort,
      defaults to
 
@@ -182,7 +193,7 @@ Valid arguments are:
 Description
 
 This is a helper method that will first sort your data and then paginate it.
-Returns data the way paginate does.
+Returns a resultset.
 
 =head2 paginate
 
@@ -191,15 +202,12 @@ Returns data the way paginate does.
 
 Description
 
-Paginates the passed in schema by the following CGI parameters:
+Paginates the passed in resultset based on the following CGI parameters:
 
-  start - page to show
+  start - first row to display
   limit - amount of rows per page
 
-Returns data has a hashref containing:
-
-  data  => $paginated_rs,
-  total => $total_rows,
+Returns a resultset.
 
 =head2 schema
 
@@ -207,48 +215,72 @@ Returns data has a hashref containing:
 
 Description
 
-This is just a basic accesor method for your schema
+This is just a basic accessor method for your schema
 
 =head2 search
 
   my $resultset   = $self->schema->resultset('Foo');
   my $searched_rs = $self->search($resultset);
 
-Description, uses $rs->controller_search
+Description
+
+Calls the controller_search method on the passed in resultset with all of the
+CGI parameters.  I like to have this look something like the following:
+
+  Base Dispatch method
+  dispatch table
 
 =head2 sort
 
   my $resultset = $self->schema->resultset('Foo');
   my $result = $self->sort($resultset);
 
-Description, uses $rs->controller_sort
+Description
+
+Exactly the same as search, except calls controller sort.  Here is how I use it:
+
+  Base sort dispatcher
+  sort table
 
 =head2 simple_deletion
 
-  $self->simple_deletion({ table => 'Foo' });
+  $self->simple_deletion({ rs => 'Foo' });
+
+Description
+
+Deletes from the passed in resultset based on the following CGI parameter:
+
+  to_delete - values of the ids of items to delete
 
 Valid arguments are:
 
-  table - source loaded into schema
+  rs - resultset loaded into schema
+
+Note that this method uses the $rs->delete method, as opposed to $rs->delete_all
 
 =head2 simple_search
 
-  my $searched_rs = $self->simple_search({ table => 'Foo' });
+  my $searched_rs = $self->simple_search({ rs => 'Foo' });
 
 Valid arguments are:
 
-  table - source loaded into schema
+  rs - source loaded into schema
 
 =head2 simple_sort
 
   my $resultset = $self->schema->resultset('Foo');
   my $sorted_rs = $self->simple_sort($resultset);
 
+Description
+
+Sorts the passed in resultset based on the following CGI parameters:
+
+  sort - field to sort by, defaults to primarky key
+  dir  - direction to sort
+
 Valid arguments are:
 
   table - source loaded into schema
-
-Description
 
 =cut
 
