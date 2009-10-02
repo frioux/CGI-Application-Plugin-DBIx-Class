@@ -117,7 +117,7 @@ sub simple_sort {
    if ( $self->query->param('sort') ) {
       %order_by = (
          order_by => {
-            q{-}.$self->request->params->{dir} => $self->request->params->{sort}
+            q{-}.$self->query->param('dir') => $self->query->param('sort')
          }
       );
    }
