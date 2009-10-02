@@ -44,7 +44,6 @@ sub paginate {
       $self->query->param('start')
       ? ( $self->query->param('start') / $rows + 1 )
       : 1;
-
    my $total = $resultset->count;
 
    my $paginated_rs = $resultset->search( undef, {
@@ -131,7 +130,6 @@ sub simple_sort {
 
 =head1 DESCRIPTION
 
-
 =head1 METHODS
 
 =head2 dbic_config
@@ -140,10 +138,15 @@ sub simple_sort {
 
 Description
 
+You must run this method in setup or cgiapp_init to setup your schema.
+
 Valid arguments are:
 
-  schema - Instance of DBIC Schema
-  ignored_params - Params to ignore
+  schema - Required, Instance of DBIC Schema
+  ignored_params - Optional, Params to ignore when doing a simple search or sort,
+     defaults to
+
+  [qw{limit start sort dir _dc rm xaction}]
 
 =head2 page_and_sort
 
@@ -152,16 +155,8 @@ Valid arguments are:
 
 Description
 
-=head2 paginate
-
-  my $resultset = $self->schema->resultset('Foo');
-  my $result = $self->paginate($resultset);
-
-Description
-
-Valid arguments are:
-
-  resultset - DBIx::Class::ResultSet
+This is a helper method that will first sort your data and then paginate it.
+Returns data the way paginate does.
 
 =head2 paginate
 
@@ -169,12 +164,24 @@ Valid arguments are:
   my $result = $self->paginate($resultset);
 
 Description
+
+Paginates the passed in schema by the following CGI parameters:
+
+  start - page to show
+  limit - amount of rows per page
+
+Returns data has a hashref containing:
+
+  data  => $paginated_rs,
+  total => $total_rows,
 
 =head2 schema
 
   my $schema = $self->schema;
 
 Description
+
+This is just a basic accesor method for your schema
 
 =head2 search
 
