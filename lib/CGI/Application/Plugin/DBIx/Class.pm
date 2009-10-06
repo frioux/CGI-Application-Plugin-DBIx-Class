@@ -162,7 +162,7 @@ sub simple_sort {
 
 =head1 DESCRIPTION
 
-This module basically helps you to map various L<DBIx::Class> features to cgi
+This module basically helps you to map various L<DBIx::Class> features to CGI
 parameters.  For the most part that means it will help you do searching,
 sorting, and pagination with a minimum of effort and thought.  Currently the
 connection is gotten from L<CGI::Application::Plugin::DBH>.
@@ -173,11 +173,11 @@ connection is gotten from L<CGI::Application::Plugin::DBH>.
 
   $self->dbic_config({schema => MyApp::Schema->connect(@connection_data)});
 
-Description
+=head3 Description
 
 You must run this method in setup or cgiapp_init to setup your schema.
 
-Valid arguments are:
+=head3 Valid arguments are:
 
   schema - Required, Name of DBIC Schema
   ignored_params - Optional, Params to ignore when doing a simple search or sort,
@@ -190,7 +190,7 @@ Valid arguments are:
   my $resultset = $self->schema->resultset('Foo');
   my $result = $self->page_and_sort($resultset);
 
-Description
+=head3 Description
 
 This is a helper method that will first sort your data and then paginate it.
 Returns a resultset.
@@ -200,7 +200,7 @@ Returns a resultset.
   my $resultset = $self->schema->resultset('Foo');
   my $result = $self->paginate($resultset);
 
-Description
+=head3 Description
 
 Paginates the passed in resultset based on the following CGI parameters:
 
@@ -213,7 +213,7 @@ Returns a resultset.
 
   my $schema = $self->schema;
 
-Description
+=head3 Description
 
 This is just a basic accessor method for your schema
 
@@ -222,7 +222,7 @@ This is just a basic accessor method for your schema
   my $resultset   = $self->schema->resultset('Foo');
   my $searched_rs = $self->search($resultset);
 
-Description
+=head3 Description
 
 Calls the controller_search method on the passed in resultset with all of the
 CGI parameters.  I like to have this look something like the following:
@@ -279,7 +279,7 @@ CGI parameters.  I like to have this look something like the following:
   my $resultset = $self->schema->resultset('Foo');
   my $result = $self->sort($resultset);
 
-Description
+=head3 Description
 
 Exactly the same as search, except calls controller_sort.  Here is how I use it:
 
@@ -334,13 +334,13 @@ Exactly the same as search, except calls controller_sort.  Here is how I use it:
 
   $self->simple_deletion({ rs => 'Foo' });
 
-Description
+=head3 Description
 
 Deletes from the passed in resultset based on the following CGI parameter:
 
   to_delete - values of the ids of items to delete
 
-Valid arguments are:
+=head3 Valid arguments are:
 
   rs - resultset loaded into schema
 
@@ -350,7 +350,7 @@ Note that this method uses the $rs->delete method, as opposed to $rs->delete_all
 
   my $searched_rs = $self->simple_search({ rs => 'Foo' });
 
-Valid arguments are:
+=head3 Valid arguments are:
 
   rs - source loaded into schema
 
@@ -359,14 +359,14 @@ Valid arguments are:
   my $resultset = $self->schema->resultset('Foo');
   my $sorted_rs = $self->simple_sort($resultset);
 
-Description
+=head3 Description
 
 Sorts the passed in resultset based on the following CGI parameters:
 
   sort - field to sort by, defaults to primarky key
   dir  - direction to sort
 
-Valid arguments are:
+=head3 Valid arguments are:
 
   table - source loaded into schema
 
