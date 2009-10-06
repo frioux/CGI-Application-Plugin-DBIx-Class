@@ -366,10 +366,6 @@ Sorts the passed in resultset based on the following CGI parameters:
   sort - field to sort by, defaults to primarky key
   dir  - direction to sort
 
-=head3 Valid arguments are:
-
-  table - source loaded into schema
-
 =cut
 
 __END__
