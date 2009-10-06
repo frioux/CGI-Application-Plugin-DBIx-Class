@@ -227,8 +227,52 @@ Description
 Calls the controller_search method on the passed in resultset with all of the
 CGI parameters.  I like to have this look something like the following:
 
-  Base Dispatch method
-  dispatch table
+   # Base search dispatcher, defined in MyApp::Schema::ResultSet
+   sub _build_search {
+      my $self           = shift;
+      my $dispatch_table = shift;
+      my $q              = shift;
+
+      my %search = ();
+      my %meta   = ();
+
+      foreach ( keys %{$q} ) {
+         if ( my $fn = $dispatch_table->{$_} and $q->{$_} ) {
+            my ( $tmp_search, $tmp_meta ) = $fn->( $q->{$_} );
+            %search = ( %search, %{$tmp_search} );
+            %meta   = ( %meta,   %{$tmp_meta} );
+         }
+      }
+
+      return $self->search(\%search, \%meta);
+   }
+
+   # search method in specific resultset
+   sub controller_search {
+      my $self   = shift;
+      my $params = shift;
+      return $self->_build_search({
+            status => sub {
+               return { 'repair_order_status' => shift }, {};
+            },
+            part_id => sub {
+               return { 'lineitems.part_id' => { -like => q{%}.shift( @_ ).q{%} } }, { join => 'lineitems' };
+            },
+            serial => sub {
+               return { 'lineitems.serial' => { -like => q{%}.shift( @_ ).q{%} } }, { join => 'lineitems' };
+            },
+            id => sub {
+               return { 'id' => shift }, {};
+            },
+            customer_id => sub {
+               return { 'customer_id' => shift }, {};
+            },
+            repair_order_id => sub {
+               return { 'repair_order_id' => { -like => q{%}.shift( @_ ).q{%} } }, {};
+            },
+         },$params
+      );
+   }
 
 =head2 sort
 
@@ -237,10 +281,54 @@ CGI parameters.  I like to have this look something like the following:
 
 Description
 
-Exactly the same as search, except calls controller sort.  Here is how I use it:
+Exactly the same as search, except calls controller_sort.  Here is how I use it:
 
-  Base sort dispatcher
-  sort table
+   # Base sort dispatcher, defined in MyApp::Schema::ResultSet
+   sub _build_sort {
+      my $self = shift;
+      my $dispatch_table = shift;
+      my $default = shift;
+      my $q = shift;
+
+      my %search = ();
+      my %meta   = ();
+
+      my $direction = $q->{dir};
+      my $sort      = $q->{sort};
+
+      if ( my $fn = $dispatch_table->{$sort} ) {
+         my ( $tmp_search, $tmp_meta ) = $fn->( $direction );
+         %search = ( %search, %{$tmp_search} );
+         %meta   = ( %meta,   %{$tmp_meta} );
+      } elsif ( $sort && $direction ) {
+         my ( $tmp_search, $tmp_meta ) = $default->( $sort, $direction );
+         %search = ( %search, %{$tmp_search} );
+         %meta   = ( %meta,   %{$tmp_meta} );
+      }
+
+      return $self->search(\%search, \%meta);
+   }
+
+   # sort method in specific resultset
+   sub controller_sort {
+      my $self = shift;
+      my $params = shift;
+      return $self->_build_sort({
+           first_name => sub {
+              my $direction = shift;
+              return {}, {
+                 order_by => { "-$direction" => [qw{last_name first_name}] },
+              };
+           },
+         }, sub {
+        my $param = shift;
+        my $direction = shift;
+        return {}, {
+           order_by => { "-$direction" => $param },
+        };
+         },$params
+      );
+   }
 
 =head2 simple_deletion
 
