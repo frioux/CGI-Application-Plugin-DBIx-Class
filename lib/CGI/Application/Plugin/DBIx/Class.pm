@@ -156,15 +156,16 @@ sub simple_sort {
             $self->schema->resultset('People')
          )
      );
+     # ...
   }
 
 
 =head1 DESCRIPTION
 
-This module basically helps you to map various L<DBIx::Class> features to CGI
-parameters.  For the most part that means it will help you do searching,
-sorting, and pagination with a minimum of effort and thought.  Currently the
-connection is gotten from L<CGI::Application::Plugin::DBH>.
+This module helps you to map various L<DBIx::Class> features to CGI parameters.
+For the most part that means it will help you search, sort, and paginate with a
+minimum of effort and thought.  Currently it uses the connection from
+L<CGI::Application::Plugin::DBH>.
 
 =head1 METHODS
 
