@@ -13,7 +13,6 @@ use base qw(Exporter AutoLoader);
 
 our @EXPORT_OK   = qw(&dbic_config &page_and_sort &schema &search &simple_search &simple_sort &sort &paginate &simple_deletion);
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
-our $VERSION     = '0.0001';
 
 Readonly my $PAGES => 25;
 
