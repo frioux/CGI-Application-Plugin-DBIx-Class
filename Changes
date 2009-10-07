@@ -1,5 +1,8 @@
 Revision history for CGI-Application-Plugin-DBIx-Class
 
+0.092801 Tue Oct 06 22:38:00 CDT 2009
+       - Add missing build requires directives
+
 0.092800 Tue Oct 06 15:32:00 CDT 2009
        - Initial Release
 
