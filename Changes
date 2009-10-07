@@ -1,5 +1,7 @@
 Revision history for CGI-Application-Plugin-DBIx-Class
 
+       - Fix width of example code in POD
+
 0.092801 Tue Oct 06 22:38:00 CDT 2009
        - Add missing build requires directives
 

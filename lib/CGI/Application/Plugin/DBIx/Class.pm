@@ -256,10 +256,14 @@ CGI parameters.  I like to have this look something like the following:
                return { 'repair_order_status' => shift }, {};
             },
             part_id => sub {
-               return { 'lineitems.part_id' => { -like => q{%}.shift( @_ ).q{%} } }, { join => 'lineitems' };
+               return {
+                  'lineitems.part_id' => { -like => q{%}.shift( @_ ).q{%} }
+               }, { join => 'lineitems' };
             },
             serial => sub {
-               return { 'lineitems.serial' => { -like => q{%}.shift( @_ ).q{%} } }, { join => 'lineitems' };
+               return {
+                  'lineitems.serial' => { -like => q{%}.shift( @_ ).q{%} }
+               }, { join => 'lineitems' };
             },
             id => sub {
                return { 'id' => shift }, {};
@@ -268,7 +272,9 @@ CGI parameters.  I like to have this look something like the following:
                return { 'customer_id' => shift }, {};
             },
             repair_order_id => sub {
-               return { 'repair_order_id' => { -like => q{%}.shift( @_ ).q{%} } }, {};
+               return {
+                  'repair_order_id' => { -like => q{%}.shift( @_ ).q{%} }
+               }, {};
             },
          },$params
       );
