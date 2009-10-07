@@ -372,6 +372,11 @@ Sorts the passed in resultset based on the following CGI parameters:
   sort - field to sort by, defaults to primarky key
   dir  - direction to sort
 
+=head1 CREDITS
+
+Thanks to Micro Technology Services, Inc. for funding the initial development
+of this module.
+
 =cut
 
 __END__
