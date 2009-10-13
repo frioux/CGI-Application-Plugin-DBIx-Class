@@ -137,7 +137,6 @@ sub simple_sort {
   sub cgiapp_init  {
       my $self = shift;
 
-      # see docs for L<CGI::Application::Plugin::DBH>
       $self->dbh_config($data_source, $username, $auth, \%attr);
       $self->dbic_config({schema => 'MyApp::Schema' });
   }
@@ -371,6 +370,10 @@ Sorts the passed in resultset based on the following CGI parameters:
 
   sort - field to sort by, defaults to primarky key
   dir  - direction to sort
+
+=head SEE ALSO
+
+L<CGI::Application::Plugin::DBH>
 
 =head1 CREDITS
 
