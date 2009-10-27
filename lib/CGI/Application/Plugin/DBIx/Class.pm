@@ -191,8 +191,8 @@ You must run this method in setup or cgiapp_init to setup your schema.
 
 =head3 Description
 
-This is a helper method that will first sort your data and then paginate it.
-Returns a resultset.
+This is a helper method that will first sort (with C<simple_sort>) your data and
+then paginate it.  Returns a resultset.
 
 =head2 paginate
 

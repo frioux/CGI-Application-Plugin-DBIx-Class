@@ -1,5 +1,7 @@
 Revision history for CGI-Application-Plugin-DBIx-Class
 
+       - Clarify some pod
+
 0.092900 Sat Oct 17 01:15:00 CDT 2009
        - Stop using BUILD_REQUIRES as it causes build failures most of the time
        - Basic pod fixes
