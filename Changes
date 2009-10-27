@@ -1,5 +1,6 @@
 Revision history for CGI-Application-Plugin-DBIx-Class
 
+       - Configurable page size
        - Clarify some pod
 
 0.092900 Sat Oct 17 01:15:00 CDT 2009

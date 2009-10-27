@@ -4,7 +4,6 @@ package CGI::Application::Plugin::DBIx::Class;
 
 use strict;
 use warnings;
-use Readonly;
 use Carp 'croak';
 
 require Exporter;
@@ -13,8 +12,6 @@ use base qw(Exporter AutoLoader);
 
 our @EXPORT_OK   = qw(&dbic_config &page_and_sort &schema &search &simple_search &simple_sort &sort &paginate &simple_deletion);
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
-
-Readonly my $PAGES => 25;
 
 sub dbic_config {
    my $self = shift;
@@ -25,6 +22,8 @@ sub dbic_config {
    $self->{__dbic_ignored_params} = { map { $_ => 1 } @{$ignored_params} };
 
    $self->{__dbic_schema_class} = $config->{schema} or croak 'you must pass a schema into dbic_config';
+
+   $self->{__dbic_page_size} = $config->{page_size} || 25;
 }
 
 sub page_and_sort {
@@ -38,7 +37,7 @@ sub paginate {
    my $self     = shift;
    my $resultset = shift;
    # param names should be configurable
-   my $rows = $self->query->param('limit') || $PAGES;
+   my $rows = $self->query->param('limit') || $self->{__dbic_page_size};
    my $page =
       $self->query->param('start')
       ? ( $self->query->param('start') / $rows + 1 )
@@ -179,8 +178,9 @@ Valid arguments are:
  schema - Required, Name of DBIC Schema
  ignored_params - Optional, Params to ignore when doing a simple search or sort,
     defaults to
-
  [qw{limit start sort dir _dc rm xaction}]
+
+ page_size - Optional, amount of results per page, defaults to 25
 
 =head2 page_and_sort
 
