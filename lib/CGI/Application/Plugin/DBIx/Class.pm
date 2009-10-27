@@ -172,11 +172,9 @@ L<CGI::Application::Plugin::DBH>.
 
  $self->dbic_config({schema => MyApp::Schema->connect(@connection_data)});
 
-=head3 Description
-
 You must run this method in setup or cgiapp_init to setup your schema.
 
-=head3 Valid arguments are:
+Valid arguments are:
 
  schema - Required, Name of DBIC Schema
  ignored_params - Optional, Params to ignore when doing a simple search or sort,
@@ -189,8 +187,6 @@ You must run this method in setup or cgiapp_init to setup your schema.
  my $resultset = $self->schema->resultset('Foo');
  my $result = $self->page_and_sort($resultset);
 
-=head3 Description
-
 This is a helper method that will first sort (with C<simple_sort>) your data and
 then paginate it.  Returns a resultset.
 
@@ -198,8 +194,6 @@ then paginate it.  Returns a resultset.
 
  my $resultset = $self->schema->resultset('Foo');
  my $result = $self->paginate($resultset);
-
-=head3 Description
 
 Paginates the passed in resultset based on the following CGI parameters:
 
@@ -212,16 +206,12 @@ Returns a resultset.
 
  my $schema = $self->schema;
 
-=head3 Description
-
 This is just a basic accessor method for your schema
 
 =head2 search
 
  my $resultset   = $self->schema->resultset('Foo');
  my $searched_rs = $self->search($resultset);
-
-=head3 Description
 
 Calls the controller_search method on the passed in resultset with all of the
 CGI parameters.  I like to have this look something like the following:
@@ -284,8 +274,6 @@ CGI parameters.  I like to have this look something like the following:
  my $resultset = $self->schema->resultset('Foo');
  my $result = $self->sort($resultset);
 
-=head3 Description
-
 Exactly the same as search, except calls controller_sort.  Here is how I use it:
 
  # Base sort dispatcher, defined in MyApp::Schema::ResultSet
@@ -339,13 +327,11 @@ Exactly the same as search, except calls controller_sort.  Here is how I use it:
 
  $self->simple_deletion({ rs => 'Foo' });
 
-=head3 Description
-
 Deletes from the passed in resultset based on the following CGI parameter:
 
  to_delete - values of the ids of items to delete
 
-=head3 Valid arguments are:
+Valid arguments are:
 
  rs - resultset loaded into schema
 
@@ -355,7 +341,7 @@ Note that this method uses the $rs->delete method, as opposed to $rs->delete_all
 
  my $searched_rs = $self->simple_search({ rs => 'Foo' });
 
-=head3 Valid arguments are:
+Valid arguments are:
 
  rs - source loaded into schema
 
@@ -363,8 +349,6 @@ Note that this method uses the $rs->delete method, as opposed to $rs->delete_all
 
  my $resultset = $self->schema->resultset('Foo');
  my $sorted_rs = $self->simple_sort($resultset);
-
-=head3 Description
 
 Sorts the passed in resultset based on the following CGI parameters:
 
