@@ -12,7 +12,7 @@ BEGIN { use_ok('CAPDBICTest::Schema') };
 BEGIN {
    $ENV{CGI_APP_RETURN_ONLY} = 1;
    use_ok('CAPDBICTest::CGIApp');;
-};
+}
 
 my $t1_obj = CAPDBICTest::CGIApp->new();
 my $t1_output = $t1_obj->run();
@@ -30,13 +30,29 @@ $schema->populate(Stations => [
    [qw{7  hot     legit     }],
    [qw{8  groovy  station   }],
    [qw{9  wicked  out       }],
+   [qw{10  awesome bitchin   }],
+   [qw{11  cool    bad       }],
+   [qw{12  tubular righeous  }],
+   [qw{13  rad     totally   }],
+   [qw{14  sweet   beesknees }],
+   [qw{15  gnarly  killer    }],
+   [qw{16  hot     legit     }],
+   [qw{17  groovy  station   }],
+   [qw{18  wicked  out       }],
+   [qw{19  awesome bitchin   }],
+   [qw{20  cool    bad       }],
+   [qw{21  tubular righeous  }],
+   [qw{22  rad     totally   }],
+   [qw{23  sweet   beesknees }],
+   [qw{24  gnarly  killer    }],
+   [qw{25  hot     legit     }],
+   [qw{26  groovy  station   }],
 ]);
 
 ok $t1_obj->schema->isa('DBIx::Class::Schema'), 'schema() method returns DBIx::Class schema';
 ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
 
-# page_and_sort
-{
+page_and_sort: {
    $t1_obj->query->param(limit => 3);
    $t1_obj->query->param(dir => 'asc');
    $t1_obj->query->param(sort => 'bill');
@@ -49,9 +65,7 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
    $t1_obj->query->delete_all;
 }
 
-# paginate
-{
-
+paginate: {
    $t1_obj->query->param(limit => 3);
    my $paginated = $t1_obj->paginate($t1_obj->schema->resultset('Stations'));
    cmp_ok $paginated->count, '>=', 3,
@@ -67,22 +81,19 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
    $t1_obj->query->delete_all;
 }
 
-# search
-{
+search: {
    my $searched = $t1_obj->search('Stations');
    cmp_deeply [map $_->id, $searched->all], [3], q{controller_search get's called by search};
    $t1_obj->query->delete_all;
 }
 
-# sort
-{
+sort: {
    my $sort = $t1_obj->sort('Stations');
    cmp_deeply [map $_->bill, $sort->all], [sort map $_->bill, $sort->all], q{controller_sort get's called by sort};
    $t1_obj->query->delete_all;
 }
 
-# simple_search
-{
+simple_search: {
    $t1_obj->query->param('bill', 'oo');
    my $simple_searched = $t1_obj->simple_search({ rs => 'Stations' });
    is scalar(grep { $_->bill =~ m/oo/ } $simple_searched->all),
@@ -90,11 +101,11 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
    $t1_obj->query->delete_all;
 }
 
-# simple_sort
-{
+simple_sort: {
    my $simple_sorted =
       $t1_obj->simple_sort($t1_obj->schema->resultset('Stations'));
-   cmp_deeply [map $_->id, $simple_sorted->all], [1..9], 'default sort is id';
+      use Data::Dump 'pp';
+   cmp_deeply [map $_->id, $simple_sorted->all], [1..26], 'default sort is id';
 
    $t1_obj->query->param(dir => 'asc');
    $t1_obj->query->param(sort => 'bill');
@@ -112,13 +123,27 @@ ok $t1_obj->schema->resultset('Stations'), 'resultset correctly found';
    $t1_obj->query->delete_all;
 }
 
-# simple_deletion
-{
+page_size: {
+   my $paginated = $t1_obj->paginate($t1_obj->schema->resultset('Stations'));
+   is $paginated->count, 25, 'default page size is 25';
+
+   $t1_obj->dbic_config({
+      schema    => 'CAPDBICTest::Schema',
+      page_size => 20,
+   });
+
+   $paginated = $t1_obj->paginate($t1_obj->schema->resultset('Stations'));
+   is $paginated->count, 20, 'default page size can be changed with dbic_config';
+}
+
+simple_deletion: {
    $t1_obj->query->param('to_delete', 1, 2, 3);
-   cmp_bag [map $_->id, $t1_obj->schema->resultset('Stations')->all] => [1..9], 'values are not deleted';
+   cmp_bag [map $_->id, $t1_obj->schema->resultset('Stations')->all] => [1..26],
+      'values are not deleted';
    my $simple_deletion = $t1_obj->simple_deletion({ rs => 'Stations' });
    cmp_bag $simple_deletion => [1,2,3], 'values appear to be deleted';
-   cmp_bag [map $_->id, $t1_obj->schema->resultset('Stations')->all] => [4..9], 'values are deleted';
+   cmp_bag [map $_->id, $t1_obj->schema->resultset('Stations')->all] => [4..26],
+      'values are deleted';
    $t1_obj->query->delete_all;
 }
 
