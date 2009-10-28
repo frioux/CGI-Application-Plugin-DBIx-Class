@@ -8,7 +8,7 @@ use Carp 'croak';
 
 require Exporter;
 
-use base qw(Exporter AutoLoader);
+use parent qw(Exporter AutoLoader);
 
 our @EXPORT_OK   = qw(&dbic_config &page_and_sort &schema &search &simple_search &simple_sort &sort &paginate &simple_deletion);
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
@@ -100,7 +100,7 @@ sub simple_search {
       # going to imply null for a user
       if ( $self->query->param($_) ne '' and not $skips{$_} ) {
          # should be configurable
-         $searches->{$_} = { like => q{%} . $self->query->param($_) . q{%} };
+         $searches->{$_} = { like => [map "%$_%", $self->query->param($_)]};
       }
    }
 
@@ -340,6 +340,10 @@ Note that this method uses the $rs->delete method, as opposed to $rs->delete_all
 =head2 simple_search
 
  my $searched_rs = $self->simple_search({ rs => 'Foo' });
+
+This method just searches on all of the CGI parameters that are not in the
+C<ignored_params> with a like "%$value%".  If there are multiple values it will
+make the search an C<or> between the different values.
 
 Valid arguments are:
 

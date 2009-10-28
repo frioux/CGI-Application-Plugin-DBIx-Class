@@ -1,6 +1,9 @@
 Revision history for CGI-Application-Plugin-DBIx-Class
 
-0.093010 Sat Oct 17 01:15:00 CDT 2009
+0.093010 Tue Oct 28 00:00:00 CDT 2009
+       - Allow for arrayrefs in simple_search
+
+0.093000 Tue Oct 27 06:45:00 CDT 2009
        - Configurable page size
        - Clarify some pod
 
