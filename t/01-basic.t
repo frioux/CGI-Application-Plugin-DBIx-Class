@@ -114,7 +114,6 @@ simple_search: {
 simple_sort: {
    my $simple_sorted =
       $t1_obj->simple_sort($t1_obj->schema->resultset('Stations'));
-      use Data::Dump 'pp';
    cmp_deeply [map $_->id, $simple_sorted->all], [1..26], 'default sort is id';
 
    $t1_obj->query->param(dir => 'asc');

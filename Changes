@@ -1,6 +1,9 @@
 Revision history for CGI-Application-Plugin-DBIx-Class
 
-0.093010 Tue Oct 28 00:00:00 CDT 2009
+0.093011 Wed Oct 28 13:05:00 CDT 2009
+       - Yet another dependancy fix
+
+0.093010 Wed Oct 28 00:00:00 CDT 2009
        - Allow for arrayrefs in simple_search
 
 0.093000 Tue Oct 27 06:45:00 CDT 2009
