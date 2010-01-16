@@ -1,4 +1,7 @@
-Revision history for CGI-Application-Plugin-DBIx-Class
+Revision history for {{$dist->name}}
+
+{{$NEXT}}
+       - Fix broken build (world writable bits, windows--)
 
 0.093011 Wed Oct 28 13:05:00 CDT 2009
        - Yet another dependancy fix
