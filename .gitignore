@@ -2,3 +2,4 @@ test.db
 *.swp
 *.swo
 CGI-Application-Plugin-DBIx-Class-*
+.build
