@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+       - Get rid of some warnings and fix my silly labelling for newer versions
+         of perl
 
 0.100180  2010-01-18 22:24:54 CST6CDT
        - I am so bad at this.  Fix deps.
