@@ -1,10 +1,18 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Merge 1.000000 and 0.100210 ... frew fail
 
 1.000000  2011-05-20 15:35:33 CST6CDT
   - Remove dep on CGI::Application::Plugin::DBH
   - Fix terrible leak
+
+0.100210  2010-01-21 19:54:05 CST6CDT
+       - Get rid of some warnings and fix my silly labelling for newer versions
+         of perl
+
+0.100180  2010-01-18 22:24:54 CST6CDT
+       - I am so bad at this.  Fix deps.
 
 0.100160  2010-01-16 16:44:37 CST6CDT
        - Fix broken build (world writable bits, windows--)
