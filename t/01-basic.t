@@ -7,7 +7,6 @@ use UNIVERSAL;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin/lib";
-BEGIN { use_ok('CGI::Application::Plugin::DBH') };
 BEGIN { use_ok('CAPDBICTest::Schema') };
 BEGIN {
    $ENV{CGI_APP_RETURN_ONLY} = 1;
@@ -61,7 +60,7 @@ page_and_sort: {
    is $paged_and_sorted->count => 3, 'page_and_sort correctly pages';
    cmp_deeply [map $_->bill, $paged_and_sorted->all],
               [sort map $_->bill, $paged_and_sorted->all],
-	      'page_and_sort correctly sorts';
+         'page_and_sort correctly sorts';
    $t1_obj->query->delete_all;
 }
 
@@ -128,7 +127,7 @@ simple_sort: {
       $t1_obj->simple_sort($t1_obj->schema->resultset('Stations'));
    cmp_deeply [map $_->bill, $simple_sorted->all],
               [reverse sort map $_->bill, $simple_sorted->all],
-	      'alternate sort works';
+         'alternate sort works';
    $t1_obj->query->delete_all;
 }
 

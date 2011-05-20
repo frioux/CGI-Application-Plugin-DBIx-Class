@@ -14,6 +14,11 @@ our @EXPORT_OK   = qw(&dbic_config &page_and_sort &schema &search &simple_search
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
 
 sub dbic_config {
+   $_[0]->{__dbic_connect_info} = $_[1]->{connect_info};
+   if (!$_[0]->{__dbic_connect_info} && $_[0]->can('dbh') ) {
+      my $dbh = $_[0]->dbh;
+      $_[0]->{__dbic_connect_info} = sub { $dbh }
+   }
    my $self = shift;
    my $config = shift;
    my $ignored_params = $config->{ignored_params} ||
@@ -50,11 +55,11 @@ sub paginate {
 }
 
 sub schema {
-   if ( !$_[0]->{schema} ) {
-      my $dbh = $_[0]->dbh;
-      $_[0]->{schema} = $_[0]->{__dbic_schema_class}->connect( sub { $dbh } );
+   my $self = shift;
+   if ( !$self->{schema} ) {
+      $self->{schema} = $self->{__dbic_schema_class}->connect( $self->{__dbic_connect_info} );
    }
-   return $_[0]->{schema};
+   return $self->{schema};
 }
 
 sub search {
@@ -130,14 +135,19 @@ sub simple_sort {
 
 =head1 SYNOPSIS
 
- use CGI::Application::Plugin::DBH (qw/dbh_config dbh/);
  use CGI::Application::Plugin::DBIx::Class ':all';
 
  sub cgiapp_init  {
      my $self = shift;
 
-     $self->dbh_config($data_source, $username, $auth, \%attr);
-     $self->dbic_config({schema => 'MyApp::Schema' });
+     $self->dbic_config({
+        schema => 'MyApp::Schema',
+        connect_info => {
+           dsn => $data_source,
+           user => $username,
+           password => $password,
+        },
+     });
  }
 
  sub person {
@@ -162,20 +172,24 @@ sub simple_sort {
 
 This module helps you to map various L<DBIx::Class> features to CGI parameters.
 For the most part that means it will help you search, sort, and paginate with a
-minimum of effort and thought.  Currently it uses the connection from
-L<CGI::Application::Plugin::DBH>.
+minimum of effort and thought.
 
 =head1 METHODS
 
 =head2 dbic_config
 
- $self->dbic_config({schema => MyApp::Schema->connect(@connection_data)});
+ $self->dbic_config({
+   schema => MyApp::Schema->connect(@connection_data),
+   connect_info => { ... },
+ });
 
 You must run this method in setup or cgiapp_init to setup your schema.
 
 Valid arguments are:
 
  schema - Required, Name of DBIC Schema
+ connect_info - Optional, these arguments are what are passed to connect, if
+   this isn't passed and a C<dbh> method exists, that will be used
  ignored_params - Optional, Params to ignore when doing a simple search or sort,
     defaults to
  [qw{limit start sort dir _dc rm xaction}]

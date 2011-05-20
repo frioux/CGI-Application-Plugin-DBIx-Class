@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Remove dep on CGI::Application::Plugin::DBH
   - Fix terrible leak
 
 0.100160  2010-01-16 16:44:37 CST6CDT
