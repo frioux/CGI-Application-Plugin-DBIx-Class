@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix terrible leak
 
 0.100160  2010-01-16 16:44:37 CST6CDT
        - Fix broken build (world writable bits, windows--)

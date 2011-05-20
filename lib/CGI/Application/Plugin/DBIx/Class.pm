@@ -50,11 +50,11 @@ sub paginate {
 }
 
 sub schema {
-   my $self = shift;
-   if ( !$self->{schema} ) {
-      $self->{schema} = $self->{__dbic_schema_class}->connect( sub { $self->dbh() } );
+   if ( !$_[0]->{schema} ) {
+      my $dbh = $_[0]->dbh;
+      $_[0]->{schema} = $_[0]->{__dbic_schema_class}->connect( sub { $dbh } );
    }
-   return $self->{schema};
+   return $_[0]->{schema};
 }
 
 sub search {
